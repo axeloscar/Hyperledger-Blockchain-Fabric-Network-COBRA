@@ -1,8 +1,3 @@
-Voici le **README.md final** du nouveau dépôt **Hyperledger Fabric Network for COBRA**, version complète, exhaustive, claire et pensée pour un public de recherche :
-
----
-
-````markdown
 # Hyperledger Fabric Network for COBRA
 
 ## ⚙️ Overview

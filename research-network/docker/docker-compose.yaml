@@ -1,0 +1,146 @@
+################################################################################
+# 
+# Objet : Define all the structure for the architecure 
+#     
+# version : 2
+#
+# Author : Rêzan OSCAR
+#
+# Infos :
+#   - Be careful with the environement varible and Volumes path
+#   - All port of the provider must be redirect in one port in this case 7051
+# 
+################################################################################
+
+version: '2'
+
+services:
+
+  orderer.research-network.com:
+    container_name: orderer.research-network.com
+    image: hyperledger/fabric-orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/opt/gopath/fabric-samples/research-network/channel-artifacts/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # Active le tls pour le CA  Bien fair attention a mettre les chemins absolue pour les clées
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/opt/gopath/fabric-samples/research-network/channel-artifacts/genesis.block
+    - ../crypto-config/ordererOrganizations/research-network.com/orderers/orderer.research-network.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/research-network.com/orderers/orderer.research-network.com/tls/:/var/hyperledger/orderer/tls
+    - orderer.research-network.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+# Pour les peer la forme reste la meme juste faire attention au chemin et varibale d environement en cas d'echec tout recommencer
+  peer0.pro1.research-network.com:
+    container_name: peer0.pro1.research-network.com
+    extends:
+      file: peer-docker.yaml
+      service: peer-docker
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_PEER_ID=peer0.pro1.research-network.com
+      - CORE_PEER_ADDRESS=peer0.pro1.research-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pro1.research-network.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pro1.research-network.com:7051
+      - CORE_PEER_LOCALMSPID=Provider1MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/pro1.research-network.com/peers/peer0.pro1.research-network.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/pro1.research-network.com/peers/peer0.pro1.research-network.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.pro1.research-network.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+  
+
+  peer0.pro2.research-network.com:
+    container_name: peer0.pro2.research-network.com
+    extends:
+      file: peer-docker.yaml
+      service: peer-docker
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_PEER_ID=peer0.pro2.research-network.com
+      - CORE_PEER_ADDRESS=peer0.pro2.research-network.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pro2.research-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pro2.research-network.com:7051
+      - CORE_PEER_LOCALMSPID=Provider2MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/pro2.research-network.com/peers/peer0.pro2.research-network.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/pro2.research-network.com/peers/peer0.pro2.research-network.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.pro2.research-network.com:/var/hyperledger/production
+    ports:
+      - 7052:7051
+
+  peer0.pro3.research-network.com:
+    container_name: peer0.pro3.research-network.com
+    extends:
+      file: peer-docker.yaml
+      service: peer-docker
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_PEER_ID=peer0.pro3.research-network.com
+      - CORE_PEER_ADDRESS=peer0.pro3.research-network.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pro3.research-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pro3.research-network.com:7051
+      - CORE_PEER_LOCALMSPID=Provider3MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/pro3.research-network.com/peers/peer0.pro3.research-network.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/pro3.research-network.com/peers/peer0.pro3.research-network.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.pro3.research-network.com:/var/hyperledger/production
+    ports:
+      - 7053:7051
+
+  
+  peer0.pro4.research-network.com:
+    container_name: peer0.pro4.research-network.com
+    extends:
+      file: peer-docker.yaml
+      service: peer-docker
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_PEER_ID=peer0.pro4.research-network.com
+      - CORE_PEER_ADDRESS=peer0.pro4.research-network.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pro4.research-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pro4.research-network.com:7051
+      - CORE_PEER_LOCALMSPID=Provider4MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/pro4.research-network.com/peers/peer0.pro4.research-network.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/pro4.research-network.com/peers/peer0.pro4.research-network.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.pro4.research-network.com:/var/hyperledger/production
+    ports:
+      - 7054:7051
+
+  
+  peer0.pro5.research-network.com:
+    container_name: peer0.pro5.research-network.com
+    extends:
+      file: peer-docker.yaml
+      service: peer-docker
+    environment:
+      - GODEBUG=netdns=go
+      - CORE_PEER_ID=peer0.pro5.research-network.com
+      - CORE_PEER_ADDRESS=peer0.pro5.research-network.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pro5.research-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pro5.research-network.com:7051
+      - CORE_PEER_LOCALMSPID=Provider5MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/pro5.research-network.com/peers/peer0.pro5.research-network.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/pro5.research-network.com/peers/peer0.pro5.research-network.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.pro5.research-network.com:/var/hyperledger/production
+    ports:
+      - 7055:7051

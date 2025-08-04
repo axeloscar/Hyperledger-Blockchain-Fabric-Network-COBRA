@@ -1,0 +1,79 @@
+################################################################################
+# 
+# Objet : Here we define all ou network and with cryprogen we genrate all the
+#         cryptographic material the blockchain network.
+# 
+# version : 1.2
+#
+# Author : Rêzan OSCAR
+#
+# Infos :
+#   - ../bin/cryptogen generate --config crypto-config.yaml --output=crypto-config
+#   - All cryptographic material in the folder defines after the --output
+# 
+################################################################################
+
+# Define 1 Orderer and 5 Peers in this project each peer designe a different Edge Provider 
+
+# To up the number of the orderer add an other Hostname (- Hostname : orderer2)
+# and change the other config files
+OrdererOrgs:
+  - Name: OrderingService
+    Domain: research-network.com
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: Provider1
+    Domain: pro1.research-network.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+
+    Users: 
+      Count: 1
+      
+  - Name: Provider2
+    Domain: pro2.research-network.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+
+    Users: 
+      Count: 1
+
+  - Name: Provider3
+    Domain: pro3.research-network.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+
+    Users: 
+      Count: 1
+
+  - Name: Provider4
+    Domain: pro4.research-network.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+
+    Users: 
+      Count: 1
+
+  - Name: Provider5
+    Domain: pro5.research-network.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+
+    Users: 
+      Count: 1
+
+  - Name: Provider6
+    Domain: pro6.research-network.com
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+
+    Users: 
+      Count: 1

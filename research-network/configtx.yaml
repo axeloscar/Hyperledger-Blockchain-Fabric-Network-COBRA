@@ -1,0 +1,379 @@
+################################################################################
+# 
+# Objet : Script that defines the network and allow to create all the architecture
+# 
+# version : 1.5
+#
+# Author : Rêzan OSCAR
+#
+# Infos :
+#   - ../bin/configtxgen -profile OrdererRaft -outputBlock ./channel-artifacts/genesis.block -channelID channelorderer
+#   - ../bin/configtxgen -profile ChannelCoop -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID channelcoop
+#   - ../bin/configtxgen -profile ChannelCoop -outputAnchorPeersUpdate ./channel-artifacts/Provider1Anchor.tx -channelID channelcoop -asOrg Provider1MSP
+#   - ../bin/configtxgen -profile ChannelCoop -outputAnchorPeersUpdate ./channel-artifacts/Provider2Anchor.tx -channelID channelcoop -asOrg Provider2MSP
+#   - ../bin/configtxgen -profile ChannelCoop -outputAnchorPeersUpdate ./channel-artifacts/Provider3Anchor.tx -channelID channelcoop -asOrg Provider3MSP
+#   - ../bin/configtxgen -profile ChannelCoop -outputAnchorPeersUpdate ./channel-artifacts/Provider4Anchor.tx -channelID channelcoop -asOrg Provider4MSP
+#   - ../bin/configtxgen -profile ChannelCoop -outputAnchorPeersUpdate ./channel-artifacts/Provider5Anchor.tx -channelID channelcoop -asOrg Provider5MSP
+# 
+################################################################################
+
+
+################################################################################
+#   ORGANIZATIONS
+#
+#   This section defines the organizational identities that can be referenced
+#   in the configuration profiles.
+#
+#   We have an ordering serverice and 5 five peer (Provider)
+#   For the Provider keep same port 7051
+#
+################################################################################
+
+Organizations:
+
+  - &OrdererOrg
+    Name: OrderingService
+    ID: OrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/research-network.com/msp
+    
+    Policies: &OrdererOrgPolicies 
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+
+    OrdererEndpoints:
+            - orderer.research-network.com:7050
+
+  - &Provider1
+    Name: Provider1MSP
+    ID: Provider1MSP
+    MSPDir: crypto-config/peerOrganizations/pro1.research-network.com/msp
+    Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('Provider1MSP.admin', 'Provider1MSP.peer', 'Provider1MSP.client')"
+          Writers:
+              Type: Signature
+              Rule: "OR('Provider1MSP.admin', 'Provider1MSP.client')"
+          Admins:
+              Type: Signature
+              Rule: "OR('Provider1MSP.admin')" 
+          Endorsement:
+              Type: Signature
+              Rule: "OR('Provider1MSP.peer')"     
+
+    AnchorPeers:
+      - Host: peer0.pro1.research-network.com
+        Port: 7051
+
+  - &Provider2
+    Name: Provider2MSP
+    ID: Provider2MSP
+    MSPDir: crypto-config/peerOrganizations/pro2.research-network.com/msp
+    Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('Provider2MSP.admin', 'Provider2MSP.peer', 'Provider2MSP.client')"
+          Writers:
+              Type: Signature
+              Rule: "OR('Provider2MSP.admin', 'Provider2MSP.client')"
+          Admins:
+              Type: Signature
+              Rule: "OR('Provider2MSP.admin')" 
+          Endorsement:
+              Type: Signature
+              Rule: "OR('Provider2MSP.peer')" 
+
+    AnchorPeers:
+      - Host: peer0.pro2.research-network.com
+        Port: 7051
+
+  - &Provider3
+    Name: Provider3MSP
+    ID: Provider3MSP
+    MSPDir: crypto-config/peerOrganizations/pro3.research-network.com/msp
+    Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('Provider3MSP.admin', 'Provider3MSP.peer', 'Provider3MSP.client')"
+          Writers:
+              Type: Signature
+              Rule: "OR('Provider3MSP.admin', 'Provider3MSP.client')"
+          Admins:
+              Type: Signature
+              Rule: "OR('Provider3MSP.admin')" 
+          Endorsement:
+              Type: Signature
+              Rule: "OR('Provider3MSP.peer')" 
+
+    AnchorPeers:
+      - Host: peer0.pro3.research-network.com
+        Port: 7051
+
+  - &Provider4
+    Name: Provider4MSP
+    ID: Provider4MSP
+    MSPDir: crypto-config/peerOrganizations/pro4.research-network.com/msp
+    Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('Provider4MSP.admin', 'Provider4MSP.peer', 'Provider4MSP.client')"
+          Writers:
+              Type: Signature
+              Rule: "OR('Provider4MSP.admin', 'Provider4MSP.client')"
+          Admins:
+              Type: Signature
+              Rule: "OR('Provider4MSP.admin')" 
+          Endorsement:
+              Type: Signature
+              Rule: "OR('Provider4MSP.peer')" 
+
+    AnchorPeers:
+      - Host: peer0.pro4.research-network.com
+        Port: 7051
+
+  - &Provider5
+    Name: Provider5MSP
+    ID: Provider5MSP
+    MSPDir: crypto-config/peerOrganizations/pro5.research-network.com/msp
+    Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('Provider5MSP.admin', 'Provider5MSP.peer', 'Provider5MSP.client')"
+          Writers:
+              Type: Signature
+              Rule: "OR('Provider5MSP.admin', 'Provider5MSP.client')"
+          Admins:
+              Type: Signature
+              Rule: "OR('Provider5MSP.admin')" 
+          Endorsement:
+              Type: Signature
+              Rule: "OR('Provider5MSP.peer')" 
+
+    AnchorPeers:
+      - Host: peer0.pro5.research-network.com
+        Port: 7051
+
+  - &Provider6
+    Name: Provider6MSP
+    ID: Provider6MSP
+    MSPDir: crypto-config/peerOrganizations/pro6.research-network.com/msp
+    Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('Provider6MSP.admin', 'Provider6MSP.peer', 'Provider6MSP.client')"
+          Writers:
+              Type: Signature
+              Rule: "OR('Provider6MSP.admin', 'Provider6MSP.client')"
+          Admins:
+              Type: Signature
+              Rule: "OR('Provider6MSP.admin')" 
+          Endorsement:
+              Type: Signature
+              Rule: "OR('Provider6MSP.peer')" 
+
+    AnchorPeers:
+      - Host: peer0.pro6.research-network.com
+        Port: 7051
+
+################################################################################
+#
+#   CAPABILITIES
+#
+#   This section defines the capabilities of fabric network. 
+#
+#   Do not modify the version doesnt work when > 2.0
+#
+###############################################################################
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+    Orderer: &OrdererCapabilities    
+        V2_0: true
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+################################################################################
+#
+#   APPLICATION
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for application-related parameters.
+#
+################################################################################
+
+Application: &ApplicationDefaults
+
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "ANY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "ANY Endorsement"
+# Important lien vers les capabilities
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+################################################################################
+#
+#   ORDERER - Raft
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters.
+#
+#   Be careful with the certificate emplacement
+#
+################################################################################
+
+# Config seulement pour du Raft
+Orderer: &OrdererDefaults
+
+    OrdererType: etcdraft
+    Addresses: 
+        - orderer.research-network.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    # C est la qu'on choisi l'oderer qu'on utilise    
+    EtcdRaft:
+        # The set of Raft replicas for this network. For the etcd/raft-based
+        # implementation, we expect every replica to also be an OSN. Therefore,
+        # a subset of the host:port items enumerated in this list should be
+        # replicated under the Orderer.Addresses key above.
+        Consenters:
+            - Host: orderer.research-network.com
+              Port: 7050
+              ClientTLSCert: /home/rzn/Hyperledger/fabric-samples/research-network/crypto-config/ordererOrganizations/research-network.com/orderers/orderer.research-network.com/tls/server.crt
+              ServerTLSCert: /home/rzn/Hyperledger/fabric-samples/research-network/crypto-config/ordererOrganizations/research-network.com/orderers/orderer.research-network.com/tls/server.crt
+            
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "ANY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+################################################################################
+#
+#   CHANNEL
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for channel related parameters.
+#
+################################################################################
+
+Channel: &ChannelDefaults
+
+    Policies:
+
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+
+    Capabilities:
+        <<: *ChannelCapabilities
+# Application
+
+################################################################################
+#
+#   Profile
+#
+#   - Different configuration profiles may be encoded here to be specified
+#   as parameters to the configtxgen tool
+#
+#   ! Indentation and Form for consortium
+#
+################################################################################
+
+Profiles:    
+    OrdererRaft:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            OrdererType: etcdraft
+            Organizations:
+                - <<: *OrdererOrg
+                  Policies:
+                      <<: *OrdererOrgPolicies
+                      Admins:
+                          Type: Signature
+                          Rule: "OR('OrdererMSP.member')"    
+        
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - <<: *OrdererOrg
+                  Policies:
+                      <<: *OrdererOrgPolicies
+                      Admins:
+                          Type: Signature
+                          Rule: "OR('OrdererMSP.member')"
+
+        Consortiums:
+            ConsortiumEC:
+                Organizations:
+                    - <<: *Provider1
+                    - <<: *Provider2
+                    - <<: *Provider3
+                    - <<: *Provider4
+                    - <<: *Provider5
+                    - <<: *Provider6
+                      Policies:
+                          <<: *OrdererOrgPolicies
+                          Admins:
+                            Type: Signature
+                            Rule: "OR('OrdererMSP.member')"                   
+  
+    ChannelCoop:
+      Consortium: ConsortiumEC
+      <<: *ChannelDefaults
+      Application:
+        <<: *ApplicationDefaults
+        Organizations:
+          - *Provider1
+          - *Provider2
+          - *Provider3
+          - *Provider4
+          - *Provider5
+          - *Provider6
+        Capabilities:
+          <<: *ApplicationCapabilities

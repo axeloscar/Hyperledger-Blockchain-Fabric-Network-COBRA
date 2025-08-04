@@ -48,6 +48,29 @@ tar -xzvf hyperledger-fabric-ca-linux-amd64-1.5.12.tar.gz
 
 ---
 
+## 🧾 Updates to CLI and Environment
+
+Ensure that for each CLI peer interaction, you:
+
+* Set the correct `CORE_PEER_LOCALMSPID` (e.g., `Provider1MSP`)
+* Use the matching TLS files and MSP paths under `${HOME_COBRA}/crypto-config/...`
+* Do **not** mix peer addresses with wrong MSP IDs
+
+An example corrected command:
+
+```bash
+docker exec -e "CORE_PEER_LOCALMSPID=Provider1MSP" \
+  -e "CORE_PEER_TLS_ROOTCERT_FILE=${HOME_COBRA}/crypto-config/peerOrganizations/pro1.research-network.com/peers/peer0.pro1.research-network.com/tls/ca.crt" \
+  -e "CORE_PEER_MSPCONFIGPATH=${HOME_COBRA}/crypto-config/peerOrganizations/pro1.research-network.com/users/Admin@pro1.research-network.com/msp" \
+  -e "CORE_PEER_ADDRESS=peer0.pro1.research-network.com:7051" \
+  -it cli bash
+```
+
+> \[!TIP]
+> Add these commands into individual `.sh` scripts per peer to streamline deployment.
+
+---
+
 ## 🧰 Setup Instructions
 > [!NOTE]
 > Before proceeding to the following, you have to  decide in advance on the architecture of the blockchain, how many organizations and peers, combination of channels and orders, what type of consensus CTO (RAFT) or Byzantine-Fault (BFT) you will use and have. For us we have define this above.

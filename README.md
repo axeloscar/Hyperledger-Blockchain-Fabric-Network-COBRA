@@ -14,7 +14,7 @@ The network is intended for **research, simulation, and prototyping** of coopera
 > 
 > ***Do not hesiate to contribute or signal if you see errors or if you have any questions***
 >
-> ***As i say, this project was created to be used with my COBRA framework for my research on creating a collaboration framework using blockchain for Cooperative Edge composed of Edge Server and UAV. "[https://github.com/RezanOscar/COBRA](https://github.com/axeloscar/Cobra-Framework/tree/main)"***
+> ***As i say, this project was created to be used with my COBRA framework for my research on creating a collaboration framework using blockchain for Cooperative Edge composed of Edge Server and UAV. "[https://github.com/AxelOscar/COBRA](https://github.com/axeloscar/Cobra-Framework/tree/main)"***
 
 > [!WARNING]
 > The configuration files will only allow you to create a well-defined blockchain if this does not correspond to your expectations you will have to modify them, so base yourself on these files to make the modifications, and be careful most of the problems you may encounter will be crypto errors due to a bad path to the crypto files

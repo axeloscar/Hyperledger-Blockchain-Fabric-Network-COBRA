@@ -21,6 +21,28 @@ The network is intended for **research, simulation, and prototyping** of coopera
 
 ---
 
+## 📁 Repository Structure
+
+```
+hyperledger-network-cobra/
+├── research-network/
+│   ├── crypto-config.yaml         # Defines orgs, peers, and users
+│   ├── configtx.yaml              # Defines orderer and channel profiles
+│   ├── docker-compose-cli.yaml    # CLI service + environment
+│   └── docker/                    # Compose files for peers/orderer
+│       ├── docker-compose.yaml
+│       └── peer-docker.yaml
+├── automation/                    # Automation scripts
+│   ├── connecting_peer.sh         # Docker initialisation
+│   └── OpenSessionPeer.ps1        # peer connection and config
+├── docs/                          # Troubleshooting and extension guides
+│   ├── troubleshooting.md         # Troubleshooting exemple and solution
+│   └── command_raw.yaml           # All in raw commands to automate the process
+└── README.md                      # This file
+```
+
+---
+
 ## 🧱 Architecture Summary
 - **5 Organizations (Providers)**:
   - Each with 1 Peer Node
@@ -257,22 +279,36 @@ This blockchain network is designed to operate seamlessly with the [COBRA Framew
 
 ---
 
-## 📁 Repository Structure
+## ⚙️ Automation Scripts
 
-```
-hyperledger-network-cobra/
-├── research-network/
-│   ├── crypto-config.yaml         # Defines orgs, peers, and users
-│   ├── configtx.yaml              # Defines orderer and channel profiles
-│   ├── docker-compose-cli.yaml    # CLI service + environment
-│   └── docker/                    # Compose files for peers/orderer
-│       ├── docker-compose.yaml
-│       └── peer-docker.yaml
-├── docs/                          # Troubleshooting and extension guides
-│   ├── troubleshooting.md         # Troubleshooting exemple and solution
-│   └── command_raw.yaml           # All in raw commands to automate the process
-└── README.md                      # This file
-```
+To simplify peer session initialization and environment setup, the repository includes two automation scripts in the `automation/` folder:
+
+### 📜 `connecting_peer.sh` (Linux/macOS/WSL)
+
+This Bash script allows you to quickly open a command-line interface inside the `cli` container with the correct environment variables for any of the five providers.
+
+* Usage:
+
+  ```bash
+  ./automation/connecting_peer.sh <1-5>
+  ```
+
+It sets the peer's `MSPID`, TLS root certificate, MSP config path, and address, which must point to the root of your `research-network` directory.
+
+### 🪟 `OpenSessionPeer.ps1` (Windows PowerShell)
+
+This script automates launching a terminal for **each of the 5 providers**, calling `connecting_peer.sh` sequentially (via Bash) and opening CLI sessions one by one.
+
+* Double-click to launch or run:
+
+  ```powershell
+  ./automation/OpenSessionPeer.ps1
+  ```
+
+Each session is preconfigured with the appropriate peer environment and ready to receive chaincode or channel commands. You do **not** need to manually configure CLI variables.
+
+> \[!CAUTION]
+> Do not interact with the PowerShell window while the script is launching sessions. Each window may take a few seconds to initialize.
 
 ---
 

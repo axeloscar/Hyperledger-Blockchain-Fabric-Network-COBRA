@@ -280,15 +280,3 @@ To add more organizations or peers:
 * Regenerate crypto and channel artifacts
 * Add peer services in `peer-docker.yaml`
 * Join new peers to the channel and update anchor peers
-
----
-
-## 🧾 License
-
-Distributed under the **Apache 2.0 License** — see [`LICENSE`](./LICENSE) for more details.
-
----
-
-**Author**: Axel Oscar
-**Companion repo** to the [COBRA framework](https://github.com/AxelOscar/Cobra-Framework) for cooperative UAV & edge computing simulations using blockchain.
-

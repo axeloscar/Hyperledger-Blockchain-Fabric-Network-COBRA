@@ -7,7 +7,7 @@ The network is intended for **research, simulation, and prototyping** of coopera
 
 > [!CAUTION]  
 > This setup is for **experimental and research use only or proof of work**. It is **not hardened for production deployment**.
-> All the configuration files that will be described later are in the researhc folder. It is important to respect the architecture of the folder so that everything works.
+> All the configuration files described below are located in the research-network folder. It is important to respect the architecture of the folder so that everything works.
 
 > [!NOTE]
 > ***For a production use a complete architecture will have to be created. You can find all the necessary information on the Hyperledger Wiki.***
@@ -43,6 +43,8 @@ Tested on **Ubuntu 21.04** with:
 curl -sSLO https://github.com/hyperledger/fabric-ca/releases/download/v1.5.12/hyperledger-fabric-ca-linux-amd64-1.5.12.tar.gz
 tar -xzvf hyperledger-fabric-ca-linux-amd64-1.5.12.tar.gz
 ````
+> [!TIP]
+> Use Go v1.18 or lower to avoid certificate validation issues with Fabric CA
 
 ---
 

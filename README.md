@@ -72,29 +72,112 @@ This step is crucial in setting up the Hyperledger Fabric network. The genesis b
 Generate the Genesis Block for the Orderer:
 ```bash
 ../bin/configtxgen -profile OrdererGenesis -outputBlock ./channel-artifacts/genesis.block -channelID channelorderer
-configtxgen -profile ChannelCoop -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID channelcoop
 ```
-# Repeat for each provider:
+Generate Channel Configuration:
+```bash
+../bin/configtxgen -profile ChannelCoop -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID channelcoop
+```
+Generate Channel Configuration - Repeat for each provider:
 ```bash
 configtxgen -profile ChannelCoop -outputAnchorPeersUpdate ./channel-artifacts/Provider1Anchor.tx -channelID channelcoop -asOrg Provider1MSP
 ```
 > [!TIP]  
 > Run these commands from within the `fabric-samples` path or ensure all Fabric binaries are in your `$PATH`.
 
+This file defines the structure of the blockchain network, specifying the organizations, policies, and capabilities. It is used by the configtxgen tool to generate the genesis block and other artifacts for channel creation.
+
+Key Sections in configtx.yaml:
+- Organizations: Defines the details for each organization (Orderer and Providers) in the network, including their identities, policies, and anchor peers.
+- Capabilities: Specifies the feature set available for the channel and application.
+- Application: Defines the settings for the chaincode lifecycle and policies for reading, writing, and validating transactions.
+- Orderer (Raft Configuration): Defines the settings for the ordering service, which ensures the order of transactions in the blockchain.
+- Channel: Configures the policies for creating and managing channels in the network.
+- Profiles: Contains different configuration profiles that can be used to generate the genesis block and channel artifacts.
+
+> [!TIP]
+> To increase the number of providers in your network, you need to make changes in the configtx.yaml file as well as the crypto-config.yaml file to ensure that the new providers are properly integrated.
+> Add a New Provider in the crypto-config.yaml. Follow the same format used for the existing providers to add a new provider, say Provider7.
+> Modify the configtx.yaml File: Under the Organizations section, add a new entry for the new provider and Update the Profiles Section, add the new provider to both the Consortium and Channel profiles to ensure it is included in the network
+> Finally to scale up the architecture:
+> - Increase the Orderer Nodes: If you need to scale the Orderer service, you can add additional orderer nodes under the OrdererOrgs section by specifying more hostnames.
+> - Add More Channels: To create a new channel, add its definition in the Profiles section and use configtxgen to generate its transaction file.
+> - Adjust Batch Size for Higher Throughput: Increase the MaxMessageCount and PreferredMaxBytes in the Orderer configuration to handle larger volumes of transactions.
+
 ### 3. Launch the Network with Docker
 
+In this step, we will configure Docker to set up the Hyperledger Fabric network environment. Docker Compose is used to define and manage multiple containers, including the Orderer and Peer nodes, which form the backbone of our blockchain network. The Docker configuration also includes settings for the CLI container that will be used to interact with the network.
+
+Docker Compose files provide the environment setup for each component in the Hyperledger Fabric network. They specify the services, environment variables, and ports for each node. This setup allows you to deploy a distributed blockchain network across multiple nodes in a consistent and replicable manner.
+
+#### Key Components of the Docker Configuration
+##### Docker Compose Configuration for Peer Nodes
+- Objective: Defines the environment and settings for each peer node in the network.
+Environment Variables:
+- Specifies important parameters like logging level, TLS certificates, and node identities.
+- Ensures the peer nodes use secure communication by setting up TLS (Transport Layer Security).
+- Volume Mapping: Maps the local directories to the Docker container to store the cryptographic material, configuration files, and ledger data.
+
+##### Docker Compose Configuration for the Orderer Node
+- Objective: Sets up the Orderer node, which is responsible for maintaining the order of transactions in the blockchain.
+Orderer Environment Settings:
+- Defines the location of the genesis block and TLS settings to ensure secure communication.
+- Volume Mapping: Stores the Orderer’s configuration and data files securely in the Docker environment.
+
+##### CLI Container Configuration
+- Purpose: The CLI (Command Line Interface) container allows you to interact with the blockchain network for operations like chaincode installation, querying, and invoking transactions.
+Environment Variables:
+- Includes settings related to the peer address, MSP (Membership Service Provider), and the file paths for cryptographic keys.
+- Volume Mapping: Maps the local directories containing chaincode and channel artifacts to the CLI container, enabling easy access to required files.
+
+
+#### Command and Docker files
+You have following Docker configuration files in the research-network/docker directory:
+  - docker-compose.yaml: Defines the services for peers, orderer, and other network components.
+  - peer.yaml: Configuration specific to peer nodes.
+  - docker-compose-cli.yaml: To setup the docker, create in the Racine
+
+To use it:
+
 ```bash
+echo COMPOSE_PROJECT_NAME=net > .env
 docker-compose -f ../docker-compose-cli.yaml up -d
 ```
 
+> [!IMPORTANT]
+> Restart Docker Containers if Necessary: If there is an error, stop all containers and remove the different command are in the Docker Commands (Cheat Sheet) part below
+
+> [!TIP]
+> Scaling the Network: Adding More Providers To add more providers or peer nodes to your existing setup, follow these steps:
+> Update the peer-docker.yaml File
+> - Add a new service definition for the additional peer node, making sure to update the environment variables with the new peer’s details.
+> - Modify the docker-compose.yaml File
+> Include the new peer service in the overall Docker Compose setup.
+> - Ensure that the network settings and ports are correctly mapped to avoid conflicts with existing services.
+> - Adjust Volumes and Networks
+> Create new volumes for the additional peers to store their data.
+> - Connect the new peer nodes to the existing Docker network for seamless communication.
+
 ### 4. Join Peers to the Channel
 
-For each peer (in separate terminals):
+This step involves connecting each peer to the blockchain network, ensuring that they can interact with each other and the Orderer node to form a secure, decentralized network. You will use Docker commands to link the peers to the network and update their configurations to facilitate communication within the channel.
+- For each peer in your network, you need to run specific Docker commands to set up the environment variables and connect to the blockchain network.
+- Open a separate terminal window for each peer and execute the commands.
+- The commands will set up the CORE_PEER_LOCALMSPID, the TLS root certificate, and other necessary configuration details for each peer node.
 
+First for each in separate windows here is the command to enter in each peer and so execute the next command:
+```bash
+docker exec -e "CORE_PEER_LOCALMSPID=Provider1MSP" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/fabric-samples/research-network/crypto-config/peerOrganizations/pro1.research-network.com/peers/peer0.pro1.research-network.com/tls/ca.crt" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/fabric-samples/research-network/crypto-config/peerOrganizations/pro1.research-network.com/users/Admin@pro1.research-network.com/msp" -e "CORE_PEER_ADDRESS=peer0.pro1.research-network.com:7051" -it cli bash
+```
+Add environement varible (In all terminal):
 ```bash
 export ORDERER_CA=/opt/gopath/fabric-samples/research-network/crypto-config/ordererOrganizations/research-network.com/orderers/orderer.research-network.com/msp/tlscacerts/tlsca.research-network.com-cert.pem
-
+```
+Create and Join the Channel (In one terminal):
+```bash
 peer channel create -o orderer.research-network.com:7050 -c channelcoop -f ./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
+```
+Join each peer to the channel (In all terminal): 
+```bash
 peer channel join -b channelcoop.block --tls --cafile $ORDERER_CA
 ```
 > [!WARNING]  
@@ -107,6 +190,20 @@ peer channel update -o orderer.research-network.com:7050 -c channelcoop -f ./cha
 ```
 > [!NOTE]  
 > Update anchor peers after all peers have successfully joined the channel.
+
+> [!IMPORTANT]
+> Terminal Management: It's important to open a separate terminal for each peer to manage them independently. This practice helps in monitoring each node's behavior and catching any issues that may arise during the setup.
+> Troubleshooting: If any peer fails to join the channel, recheck the environment variables and the certificate paths. Restarting the Docker containers may also help resolve connectivity issues.
+> Scalability: To add more peers to the network, replicate the steps for each new peer node, making sure to adjust the environment variables and port mappings accordingly.
+
+
+### 6. Verifying the Network Setup
+
+Check Docker Logs: Use the following command to check the logs of any container:
+```
+      docker compose logs <container-id>
+```
+Verify the Network Setup: Ensure that all peers and the orderer are up and running without issues.
 
 ---
 
@@ -133,6 +230,8 @@ hyperledger-network-cobra/
 │       ├── docker-compose.yaml
 │       └── peer-docker.yaml
 ├── docs/                          # Troubleshooting and extension guides
+│   ├── troubleshooting.md         # Troubleshooting exemple and solution
+│   └── command_raw.yaml           # All in raw commands to automate the process
 └── README.md                      # This file
 ```
 

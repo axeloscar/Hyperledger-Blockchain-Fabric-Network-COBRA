@@ -10,7 +10,7 @@ The network is intended for **research, simulation, and prototyping** of coopera
 > All the configuration files described below are located in the research-network folder. It is important to respect the architecture of the folder so that everything works.
 
 > [!NOTE]
-> ***For a production use a complete architecture will have to be created. You can find all the necessary information on the Hyperledger Wiki.***
+> ***For a production use a complete architecture will have to be created. You can find all the necessary information on the [Hyperledger Fabric documentation](https://hyperledger-fabric.readthedocs.io/en/latest/) for detailed deployment strategies.***
 > 
 > ***Do not hesiate to contribute or signal if you see errors or if you have any questions***
 >
@@ -50,7 +50,21 @@ tar -xzvf hyperledger-fabric-ca-linux-amd64-1.5.12.tar.gz
 
 ## 🧰 Setup Instructions
 > [!NOTE]
-> Before proceeding to the following, you have to  decide in advance on the architecture of the blockchain, how many organizations and peers, combination of channels and orders, what type of consensus CTO (RAFT) or Byzantine-Fault (BFT) you will use and have. For us we have define this above. 
+> Before proceeding to the following, you have to  decide in advance on the architecture of the blockchain, how many organizations and peers, combination of channels and orders, what type of consensus CTO (RAFT) or Byzantine-Fault (BFT) you will use and have. For us we have define this above.
+>
+> Although 6 providers are declared, only 5 are used in the current deployment. The 6th is reserved for future scalability or redundancy tests.
+>
+
+> [!IMPORTANT]  
+> Environment paths are based on a user-defined variable: `${HOME_COBRA}`. Set it with:
+> 
+> ```bash
+> export HOME_COBRA=/absolute/path/to/your/fabric-samples/research-network
+> ```
+> 
+> Replace this path with your actual development directory.
+>
+
 
 ### 1. Generate Cryptographic Material
 After extracting the archive you will have a folder named "fabric-samples" we will create a folder in this folder which will contain all the configuration and deployment elements of our network in my case it will be called "research-network".
@@ -166,7 +180,7 @@ This step involves connecting each peer to the blockchain network, ensuring that
 - Open a separate terminal window for each peer and execute the commands.
 - The commands will set up the CORE_PEER_LOCALMSPID, the TLS root certificate, and other necessary configuration details for each peer node.
 
-First for each in separate windows here is the command to enter in each peer and so execute the next command:
+First for each peer in separate windows here is the command to enter in each peer and so execute the next command:
 ```bash
 docker exec -e "CORE_PEER_LOCALMSPID=Provider1MSP" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/fabric-samples/research-network/crypto-config/peerOrganizations/pro1.research-network.com/peers/peer0.pro1.research-network.com/tls/ca.crt" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/fabric-samples/research-network/crypto-config/peerOrganizations/pro1.research-network.com/users/Admin@pro1.research-network.com/msp" -e "CORE_PEER_ADDRESS=peer0.pro1.research-network.com:7051" -it cli bash
 ```
